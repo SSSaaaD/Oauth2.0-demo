@@ -15,15 +15,15 @@ import org.springframework.security.oauth2.provider.token.store.redis.RedisToken
 public class RedisConfig {
 
 
-    @Autowired
+   /* @Autowired
     private RedisConnectionFactory redisConnectionFactory;
 
 
-    /*
-    * redis存储token配置*/
+    *//*
+    * redis存储token配置*//*
     @Bean
     public TokenStore RedisTokenStore(){
         return new RedisTokenStore(redisConnectionFactory);
-    }
+    }*/
 
 }

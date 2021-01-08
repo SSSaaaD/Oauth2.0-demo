@@ -2,6 +2,7 @@ package com.xwn.config;
 
 import com.xwn.service.DetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +12,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 /**
  * @author xwn
@@ -30,19 +33,28 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private DetailService detailService;
 
-    @Autowired
-    private TokenStore RedisTokenStore;
+    /*@Autowired
+    private TokenStore RedisTokenStore;*/
 
+    @Autowired
+    private TokenStore tokenStore;
+
+    @Autowired
+    private JwtAccessTokenConverter jwtAccessTokenConverter;
 
 
     /*
-    * 密码模式需要的!*/
+     * 密码模式需要的!*/
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.authenticationManager(authenticationManager)
                 .userDetailsService(detailService)
-                //redis存储token
-                .tokenStore(RedisTokenStore);
+                //把获取到的accessToken装成JWTtoken
+                .tokenStore(tokenStore)
+                .accessTokenConverter(jwtAccessTokenConverter);
+        //redis存储token
+        //.tokenStore(RedisTokenStore);
+
     }
 
     @Override
@@ -54,9 +66,13 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
                 .secret(passwordEncoder.encode("123"))
                 //重定向地址
                 .redirectUris("http://localhost:8080")
+                //令牌过期时间
+                .accessTokenValiditySeconds(60)
+                //刷新令牌过期时间
+                .refreshTokenValiditySeconds(86400)
                 //授权范围
                 .scopes("all")
                 //授权类型(authorization_code(授权码模式),password(密码模式))
-                .authorizedGrantTypes("authorization_code","password");
+                .authorizedGrantTypes("authorization_code", "password","refresh_token");
     }
 }
