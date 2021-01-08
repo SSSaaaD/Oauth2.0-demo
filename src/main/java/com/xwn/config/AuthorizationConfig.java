@@ -49,7 +49,7 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.authenticationManager(authenticationManager)
                 .userDetailsService(detailService)
-                //把获取到的accessToken装成JWTtoken
+                //把获取到的accessToken转成JWTtoken
                 .tokenStore(tokenStore)
                 .accessTokenConverter(jwtAccessTokenConverter);
         //redis存储token
