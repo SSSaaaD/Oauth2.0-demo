@@ -65,7 +65,7 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
                 .withClient("xwn")
                 //秘钥
                 .secret(passwordEncoder.encode("123"))
-                //重定向地址,千万不要写错
+                //重定向地址,千万不要写错(客户端的地址)
                 .redirectUris("http://localhost:8081/login")
                 //令牌过期时间
                 .accessTokenValiditySeconds(60)
