@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
@@ -65,14 +66,23 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
                 //秘钥
                 .secret(passwordEncoder.encode("123"))
                 //重定向地址
-                .redirectUris("http://localhost:8080")
+                .redirectUris("http://localhost:8081/login")
                 //令牌过期时间
                 .accessTokenValiditySeconds(60)
                 //刷新令牌过期时间
                 .refreshTokenValiditySeconds(86400)
                 //授权范围
                 .scopes("all")
+                //自动授权,不需要手动按授权
+                //.autoApprove(true)
                 //授权类型(authorization_code(授权码模式),password(密码模式))
                 .authorizedGrantTypes("authorization_code", "password","refresh_token");
+    }
+
+
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        //获取秘钥必须要身份验证,单点登录必须要配置的
+        security.tokenKeyAccess("isAuthenticated()");
     }
 }
